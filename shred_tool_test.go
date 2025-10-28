@@ -59,4 +59,29 @@ func TestRandomWrite(t *testing.T) {
 		t.Error("Number of random bytes written", numBytesWritten, "differs from fileSize", fileSize)
 	}
 
+	file.Seek(0, 0)
+
+	buf := make([]byte, fileSize)
+	numBytesRead, err := file.Read(buf)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if int64(numBytesRead) != fileSize {
+		t.Error("Number of random bytes read", numBytesRead, "differs from fileSize", fileSize)
+	}
+
+	data_is_random := true
+	for i := 0; i < numBytesRead; i++ {
+		if buf[i] != data[i] {
+			data_is_random = false
+			break
+		}
+	}
+
+	if !data_is_random {
+		t.Error("File contents were not overwritten")
+	}
+
 }
